@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorer</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 1200px; margin: 0 auto; background-color: #f0f0f0; display: flex; }
+        h1 { color: #333; text-align: center; }
+        #menu { width: 30%; padding: 20px; background-color: #fff; border-right: 2px solid #ddd; }
+        #description-bar { display: flex; flex-direction: column; }
+        #input { padding: 10px; font-size: 16px; border: 1px solid #ddd; margin-bottom: 10px; }
+        #submit-btn, #download-btn { padding: 10px 20px; color: white; border: none; cursor: pointer; font-size: 16px; margin-bottom: 10px; }
+        #submit-btn { background-color: #4CAF50; }
+        #submit-btn:hover { background-color: #45a049; }
+        #download-btn { background-color: #2196F3; }
+        #download-btn:hover { background-color: #0b7dda; }
+        #output-container { width: 70%; height: 100vh; overflow: hidden; background-color: white; position: relative; }
+        #output { width: 100%; height: 100%; border: none; }
+        #error-message { color: red; margin-top: 10px; }
+        #loading { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: #333; }
+        .resizable { resize: horizontal; overflow: auto; }
+    </style>
+</head>
+<body>
+    <div id="menu" class="resizable">
+        <h1>Explorer</h1>
+        <form id="description-bar">
+            <input type="text" id="input" name="description" placeholder="Enter a description to explore...">
+            <button type="submit" id="submit-btn">Go</button>
+            <button type="button" id="download-btn">Download</button>
+        </form>
+        <div id="error-message"></div>
+    </div>
+    <div id="output-container">
+        <div id="loading">Loading...</div>
+        <iframe id="output"></iframe>
+    </div>
+
+    <script>
+        const form = document.getElementById('description-bar');
+        const output = document.getElementById('output');
+        const descriptionInput = document.getElementById('input');
+        const submitBtn = document.getElementById('submit-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const errorMessage = document.getElementById('error-message');
+        const loading = document.getElementById('loading');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const description = descriptionInput.value;
+            loading.style.display = 'block';
+            output.src = `http://127.0.0.1:8000/browse?description=${encodeURIComponent(description)}`;
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const description = descriptionInput.value;
+            window.location.href = `http://127.0.0.1:8000/download?description=${encodeURIComponent(description)}`;
+        });
+
+        output.addEventListener('load', () => {
+            loading.style.display = 'none';
+            descriptionInput.value = new URL(output.contentWindow.location.href).searchParams.get('description');
+        });
+    </script>
+</body>
+</html>

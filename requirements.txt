@@ -1,0 +1,10 @@
+# requirements.txt
+Django
+langchain
+gunicorn
+openai
+requests
+beautifulsoup4
+google-generativeai
+python-dotenv
+langchain_google_genai
